@@ -2,11 +2,12 @@ import tensorflow as tf
 
 class ImageCodec:
 
-    def __init__(self):
-        pass
+    def __init__(self, quality=95):
+        self.quality = quality
     
     def encode(self, images):
-        return tf.map_fn(lambda x: tf.io.encode_jpeg(x), 
+        params = dict(quality=self.quality)
+        return tf.map_fn(lambda x: tf.io.encode_jpeg(x, **params), 
                          tf.cast(tf.round(images), tf.uint8), 
                          fn_output_signature=tf.string)
 
