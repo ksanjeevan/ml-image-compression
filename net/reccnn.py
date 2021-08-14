@@ -18,11 +18,13 @@ class RecCNN(tf.keras.Model):
         self.conv20 = nn.Conv2D(num_channels, 3, activation='relu', padding='same')
 
     def call(self, x):
+        
+        x_up = tf.image.resize(x, [2*x.shape[1], 2*x.shape[2]], method='bicubic')
 
-        x = self.conv1(x)
+        x = self.conv1(x_up)
         x = self.convs(x)
-        x = self.conv20(x)
+        resid = self.conv20(x)
 
-        x = tf.image.resize(x, [2*x.shape[1], 2*x.shape[2]], method='bicubic')
+        pred = x_up + resid
 
-        return x
+        return pred

@@ -4,16 +4,11 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
-'''
-@tf.function
-def scale_and_resize(image : tf.Tensor):
-    image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-    image = tf.image.resize(image, (180, 180))
-    return image
-'''
+# https://knowyourdata-tfds.withgoogle.com/#dataset=clic&tab=STATS
+# https://www.tensorflow.org/guide/data_performance#prefetching
 
 class ClicData:
-
+    # https://www.tensorflow.org/datasets/catalog/clic
     def __init__(self):
         splits = ['train', 'test', 'validation']
         ds, self.ds_info = tfds.load('clic', 
