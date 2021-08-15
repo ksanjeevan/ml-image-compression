@@ -20,20 +20,31 @@ class ClicData:
         self._ds = dict(zip(splits, ds))
 
 
+    def _common_pipeline(self, ds):
+        ds = ds.map(lambda x: tf.image.resize(x['image'], (180, 180)), 
+                        num_parallel_calls=tf.data.experimental.AUTOTUNE)
+
+        #ds = ds.map(lambda x: tf.image.convert_image_dtype.resize(x, dtype=tf.float32), 
+        #                num_parallel_calls=tf.data.experimental.AUTOTUNE)
+
+
+        ds = ds.cache() # random transforms after cache
+        ds = ds.batch(16, drop_remainder=True)
+        ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
+
+        return ds
+
     def get_train(self):
         # https://www.tensorflow.org/api_docs/python/tf/data/Dataset
         
-        ds_train = self._ds['train']
-
-        ds_train = ds_train.map(lambda x: tf.image.resize(x['image'], (180, 180)), 
-                        num_parallel_calls=tf.data.experimental.AUTOTUNE)
-
-        ds_train = ds_train.cache() # random transforms after cache
-        ds_train = ds_train.batch(16)
-        ds_train = ds_train.prefetch(tf.data.experimental.AUTOTUNE)
-
+        ds_train = self._common_pipeline(self._ds['train'])
         return ds_train
 
+    def get_val(self):
+        # https://www.tensorflow.org/api_docs/python/tf/data/Dataset
+        
+        ds_val = self._common_pipeline(self._ds['validation'])
+        return ds_val
 
 
 '''

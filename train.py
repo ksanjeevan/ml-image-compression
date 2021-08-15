@@ -9,23 +9,36 @@ from net import ComCNN, RecCNN, ImageCodec
 
 from data import ClicData
 
-ds_train = ClicData().get_train()
 
-d, = ds_train.take(1)
-
+if __name__ == '__main__':
 
 
-Cr = ComCNN()
+    import argparse
 
-Re = RecCNN()
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument('--epochs', default=10)
+    argparser.add_argument('--lr', default=1e-3)
+    argparser.add_argument('--logs', default='logs')
+    argparser.add_argument('--no-log', action='store_true')
+
+    args = argparser.parse_args()
 
 
+    #ds_train = ClicData().get_train()
+    #d, = ds_train.take(1)
 
-Co = ImageCodec()
 
-t = Trainer(Cr, Re, Co)
+    tf.random.set_seed(42)
 
-t.train()
+    Cr = ComCNN()
+
+    Re = RecCNN()
+
+    Co = ImageCodec()
+
+    t = Trainer(Cr, Re, Co, config=vars(args))
+
+    t.run()
 
 
 

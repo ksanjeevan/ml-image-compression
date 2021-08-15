@@ -15,7 +15,7 @@ class RecCNN(tf.keras.Model):
             convs.append( nn.BatchNormalization() )
 
         self.convs = tf.keras.Sequential(convs)
-        self.conv20 = nn.Conv2D(num_channels, 3, activation='relu', padding='same')
+        self.conv20 = nn.Conv2D(num_channels, 3, activation=None, padding='same')
 
     def call(self, x):
         
@@ -25,6 +25,4 @@ class RecCNN(tf.keras.Model):
         x = self.convs(x)
         resid = self.conv20(x)
 
-        pred = x_up + resid
-
-        return pred
+        return x_up + resid

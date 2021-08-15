@@ -18,6 +18,8 @@ class ImageCodec:
 
     def __call__(self, images):
 
+
+        # Al tanto
         images = tf.cast(tf.round(images), tf.uint8)
         bits = self.encode(images)
         images_jpeg = self.decode(bits)

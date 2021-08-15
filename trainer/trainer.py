@@ -6,69 +6,54 @@ import tensorflow as tf
 
 from data import ClicData
 
-from trainer import setup_logging
-
 from tqdm import tqdm
+from .logger import Logger, EmptyLogger
 
 class Trainer:
 
     def __init__(self, Cr : tf.keras.Model, 
                        Re : tf.keras.Model, 
-                       Co : tf.keras.Model):
+                       Co : tf.keras.Model,
+                       config : dict):
 
         self.Cr = Cr
         self.Re = Re
         self.Co = Co
+        self._config = config
 
         self.loss_obj = tf.keras.losses.MeanSquaredError()
 
-        
-        self.train_loss_cr = tf.keras.metrics.Mean()
-        self.train_loss_re = tf.keras.metrics.Mean()
-        self.train_ssim = tf.keras.metrics.Mean()
+
+        self.train_log = EmptyLogger() if config['no_log'] else Logger(name='train', path=config['logs'])
 
 
-        self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=1e-3)
-        self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=1e-3)
+        print(config['lr'], type(config['lr']))
+        exit()
+
+        self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr'])
+        self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
         self.ds_train = ClicData().get_train()
 
-        log_path = setup_logging('logs')
-        self.tb_train_writer = tf.summary.create_file_writer(str(log_path.joinpath('train')))
-
-        #tf.keras.callbacks.TensorBoard('logs').set_model(self.Re)
-
-
-    def train(self):
         
-        epochs = 10
+    def run(self):
+        
+        epochs = int(self._config['epochs'])
 
         print('Starting training....')
-        for epoch in range(epochs):
+        for epoch in tqdm(range(epochs), desc='Epochs'):
 
-            print(f'Epoch {epoch}')
+            for batch_idx, images in enumerate(tqdm(self.ds_train, leave=False)):
+                results = self.train_step(images)
+                self.train_log.update_scalars(results['metrics'])
 
-            for batch_idx, images in enumerate(tqdm(self.ds_train, disable=True)):
-                loss_cr, loss_re, = self.train_step(images)
 
-                if batch_idx % 5 == 0:
-                    print('\t Loss Cr: %.2f, Loss Re %.2f'%(loss_cr, loss_re)) 
+            self.train_log.log_images(results['tensors']['images'],
+                                      results['tensors']['outputs'],
+                                      epoch)
+    
 
-            print(f'Loss Cr {self.train_loss_cr.result()}')
-            print(f'Loss Re {self.train_loss_re.result()}')
-            print('--------------------------------------')
-
-            with self.tb_train_writer.as_default():
-                tf.summary.scalar('loss_cr', self.train_loss_cr.result(), step=epoch)
-                tf.summary.scalar('loss_re', self.train_loss_re.result(), step=epoch)
-                tf.summary.scalar('ssim', self.train_ssim.result(), step=epoch)
-                
-                #ims = images.numpy().round().astype('uint8')
-                #tf.summary.image('sample', ims, max_outputs=16, step=epoch)
-
-            self.train_loss_cr.reset_states()
-            self.train_loss_re.reset_states()
-            self.train_ssim.reset_states()
+            self.train_log.log_scalars(epoch)
 
 
     def train_step(self, images : tf.Tensor):
@@ -81,20 +66,14 @@ class Trainer:
             out_re = self.Re(out_codec, training=True)
             loss_re = self.loss_obj(images, out_re)
 
-
-        #print(out_re)
-        #print(tf.reduce_max(out_re))
-        #print(tf.reduce_min(out_re))
-        #exit()
-
-        ssim = tf.image.ssim(images, out_re, 255)
-
+        
         gradients_re = tape_re.gradient(loss_re, self.Re.trainable_variables)
         self.optimizer_re.apply_gradients(zip(gradients_re, 
                                        self.Re.trainable_variables))
         # ------------ End -------------
 
     
+        # ------------ Update Cr -------------
         with tf.GradientTape() as tape_cr:
 
             out_cr = self.Cr(images, training=True)
@@ -107,12 +86,22 @@ class Trainer:
         gradients_cr = tape_cr.gradient(loss_cr, self.Cr.trainable_variables)
         self.optimizer_cr.apply_gradients(zip(gradients_cr, 
                                       self.Cr.trainable_variables))
+        # ------------ End -------------
 
 
-        tf.image
+        #out = self.Re(self.Co(self.Cr(images)))
+        ssim = tf.image.ssim(images, out_re, 255)
 
-        self.train_loss_cr(loss_cr)
-        self.train_loss_re(loss_re)
-        self.train_ssim(ssim)
+        return {
+                    'metrics' : {'loss_cr':loss_cr, 
+                                 'loss_re':loss_re, 
+                                 'ssim':ssim},
+                    'tensors' : {'images':images,
+                                 'outputs':out_re} # should be a special func
+                }
 
-        return float(loss_cr), float(loss_re)
+        #def val_step(self, images : tf.Tensor):
+
+        
+
+

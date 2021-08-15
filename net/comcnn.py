@@ -8,11 +8,11 @@ class ComCNN(tf.keras.Model):
 
     def __init__(self, num_channels=3):
         super(ComCNN, self).__init__()
-        tf.keras.Sequential()
+        #tf.keras.Sequential()
         self.conv1 = nn.Conv2D(64, 3, activation='relu', padding='same')
         self.conv2 = nn.Conv2D(64, 3, strides=2, activation='relu', padding='same')
         self.bn = nn.BatchNormalization(axis=-1)
-        self.conv3 = nn.Conv2D(num_channels, 3, activation='relu', padding='same')
+        self.conv3 = nn.Conv2D(num_channels, 3, activation=None, padding='same')
 
     def call(self, x):
 
