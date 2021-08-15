@@ -14,9 +14,12 @@ ds_train = ClicData().get_train()
 d, = ds_train.take(1)
 
 
+
 Cr = ComCNN()
 
 Re = RecCNN()
+
+
 
 Co = ImageCodec()
 
