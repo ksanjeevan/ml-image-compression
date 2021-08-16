@@ -18,11 +18,12 @@ class ImageCodec:
 
     def __call__(self, images):
 
-
-        # Al tanto
         images = tf.cast(tf.round(images), tf.uint8)
+
         bits = self.encode(images)
         images_jpeg = self.decode(bits)
+
+        #images_jpeg = tf.cast(images_jpeg, tf.float32) / 255.0
         images_jpeg = tf.cast(images_jpeg, tf.float32)
         #return tf.stop_gradient(images_jpeg)
         return images_jpeg

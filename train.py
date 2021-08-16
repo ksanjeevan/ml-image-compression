@@ -17,7 +17,8 @@ if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument('--epochs', default=10)
-    argparser.add_argument('--lr', default=1e-3)
+    argparser.add_argument('--lr-re', default=1e-3, type=float)
+    argparser.add_argument('--lr-cr', default=1e-3, type=float)
     argparser.add_argument('--logs', default='logs')
     argparser.add_argument('--no-log', action='store_true')
 
@@ -28,7 +29,7 @@ if __name__ == '__main__':
     #d, = ds_train.take(1)
 
 
-    tf.random.set_seed(42)
+    tf.random.set_seed(0)
 
     Cr = ComCNN()
 

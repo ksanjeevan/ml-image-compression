@@ -21,14 +21,14 @@ class ClicData:
 
 
     def _common_pipeline(self, ds):
-        ds = ds.map(lambda x: tf.image.resize(x['image'], (180, 180)), 
+        ds = ds.map(lambda x: tf.image.resize(x['image'], (180, 180)),
                         num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-        #ds = ds.map(lambda x: tf.image.convert_image_dtype.resize(x, dtype=tf.float32), 
-        #                num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
+        #ds = ds.map(lambda x: x / 255.0, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         ds = ds.cache() # random transforms after cache
+        #ds = ds.shuffle(1024)
         ds = ds.batch(16, drop_remainder=True)
         ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
 

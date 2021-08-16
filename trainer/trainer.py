@@ -23,15 +23,10 @@ class Trainer:
 
         self.loss_obj = tf.keras.losses.MeanSquaredError()
 
-
         self.train_log = EmptyLogger() if config['no_log'] else Logger(name='train', path=config['logs'])
 
-
-        print(config['lr'], type(config['lr']))
-        exit()
-
-        self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr'])
-        self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr'])
+        self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr_re'])
+        self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr_cr'])
 
         self.ds_train = ClicData().get_train()
 
@@ -62,8 +57,11 @@ class Trainer:
         with tf.GradientTape() as tape_re:
 
             out_cr = self.Cr(images, training=False)
-            out_codec = self.Co(out_cr)
+
+            out_codec = self.Co(out_cr)        
+
             out_re = self.Re(out_codec, training=True)
+
             loss_re = self.loss_obj(images, out_re)
 
         
@@ -78,9 +76,9 @@ class Trainer:
 
             out_cr = self.Cr(images, training=True)
 
-            out_re_ap = self.Re(out_cr, training=False)
+            out_re_aprox = self.Re(out_cr, training=False)
 
-            loss_cr = self.loss_obj(images, out_re_ap)
+            loss_cr = self.loss_obj(images, out_re_aprox)
 
 
         gradients_cr = tape_cr.gradient(loss_cr, self.Cr.trainable_variables)
@@ -89,15 +87,16 @@ class Trainer:
         # ------------ End -------------
 
 
-        #out = self.Re(self.Co(self.Cr(images)))
-        ssim = tf.image.ssim(images, out_re, 255)
+        out = self.Re(self.Co(self.Cr(images)))
+
+        ssim = tf.image.ssim(images, out, max_val=255)
 
         return {
                     'metrics' : {'loss_cr':loss_cr, 
                                  'loss_re':loss_re, 
                                  'ssim':ssim},
                     'tensors' : {'images':images,
-                                 'outputs':out_re} # should be a special func
+                                 'outputs':out} # should be a special func
                 }
 
         #def val_step(self, images : tf.Tensor):

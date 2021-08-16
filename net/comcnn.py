@@ -12,7 +12,7 @@ class ComCNN(tf.keras.Model):
         self.conv1 = nn.Conv2D(64, 3, activation='relu', padding='same')
         self.conv2 = nn.Conv2D(64, 3, strides=2, activation='relu', padding='same')
         self.bn = nn.BatchNormalization(axis=-1)
-        self.conv3 = nn.Conv2D(num_channels, 3, activation=None, padding='same')
+        self.conv3 = nn.Conv2D(num_channels, 3, activation='sigmoid', padding='same')
 
     def call(self, x):
 
@@ -20,5 +20,10 @@ class ComCNN(tf.keras.Model):
         x = self.conv2(x)
         x = self.bn(x)
         x = self.conv3(x)
+    
+        #x = tf.minimum(x, 255.0)
+
+        x = x * 255
+
 
         return x

@@ -25,4 +25,9 @@ class RecCNN(tf.keras.Model):
         x = self.convs(x)
         resid = self.conv20(x)
 
-        return x_up + resid
+        x = x_up + resid
+
+        #x = tf.minimum(tf.maximum(x, 0), 255.0)
+        x = 255.0 * tf.math.sigmoid(x)
+
+        return x
