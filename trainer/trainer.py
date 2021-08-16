@@ -89,6 +89,7 @@ class Trainer:
 
         out = self.Re(self.Co(self.Cr(images)))
 
+        out = tf.minimum(tf.maximum(out, 0), 255.0)
         ssim = tf.image.ssim(images, out, max_val=255)
 
         return {

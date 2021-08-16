@@ -19,11 +19,8 @@ class ComCNN(tf.keras.Model):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.bn(x)
-        x = self.conv3(x)
+        x = self.conv3(x) * 255
     
         #x = tf.minimum(x, 255.0)
-
-        x = x * 255
-
 
         return x
