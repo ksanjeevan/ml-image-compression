@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import numpy as np
 import tensorflow as tf
 
@@ -78,6 +79,10 @@ class Logger:
         model.save_weights(self.log_path.joinpath(name, 'model'))
 
 
+    def log_config(self, config : dict):
+        with open(self.log_path.joinpath('config.json'), 'w') as wj:
+            json.dump(config, wj, indent=4)
+
 
 class EmptyLogger(Logger):
 
@@ -92,3 +97,7 @@ class EmptyLogger(Logger):
 
     def log_model(self, name : str, model : tf.keras.Model):
         pass
+    
+    def log_config(self, config : dict):
+        pass
+

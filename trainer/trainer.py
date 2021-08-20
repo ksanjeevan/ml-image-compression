@@ -21,13 +21,15 @@ class Trainer:
         self._config = config
 
         self.log = EmptyLogger() if config['no_log'] else Logger(config['logs'])
-        
+        self.log.log_config(config)
+
         self.loss_obj = tf.keras.losses.MeanSquaredError()
         self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr_re'])
         self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr_cr'])
 
-        self.ds_train = ClicData().get_train()
-        self.ds_val = ClicData().get_val()
+        dataset = ClicData(config)
+        self.ds_train = dataset.get_train()
+        self.ds_val = dataset.get_val()
 
         if config['resume_path'] is not None:
             self._resume_train_prep()

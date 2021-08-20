@@ -11,16 +11,19 @@ import tensorflow_datasets as tfds
 
 class ClicData:
     # https://www.tensorflow.org/datasets/catalog/clic
-    def __init__(self):
+    def __init__(self, config : dict={}):
         splits = ['train', 'test', 'validation']
         ds, self.ds_info = tfds.load('clic', 
                                      split=splits, 
                                      download=True, 
-                                     shuffle_files=True,
+                                     shuffle_files=False,
                                      with_info=True,
-                                     read_config=tfds.ReadConfig(shuffle_seed=0))
+                                     #read_config=tfds.ReadConfig(shuffle_seed=0),
+                                     )
+
 
         self._ds = dict(zip(splits, ds))
+        self.batch_size = config['batch_size']
 
 
     def image_transforms(self, image_dic):
@@ -45,7 +48,7 @@ class ClicData:
             #ds = ds.shuffle(self.ds_info.splits['train'].num_examples)
 
 
-        ds = ds.batch(16, drop_remainder=True)
+        ds = ds.batch(self.batch_size, drop_remainder=True)
         ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
 
         return ds
