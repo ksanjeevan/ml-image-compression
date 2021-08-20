@@ -51,7 +51,7 @@ class Trainer:
         print('Starting training....')
         best_ssim = float('-inf')
 
-        for epoch in tqdm(range(epochs), desc='Epochs'):
+        for epoch in tqdm(range(1,epochs+1), desc='Epochs'):
 
             _train_iter = tqdm(self.ds_train, leave=False, desc='train')
             for batch_idx, images in enumerate(_train_iter):
@@ -71,7 +71,7 @@ class Trainer:
                 self.log.log_model('re', self.Re)
     
             self.log.log_scalars(epoch)
-            self.log.log_images(val_results['tensors']['images'],
+            self.log.log_images(self.Co(val_results['tensors']['images']),
                                 val_results['tensors']['outputs'],
                                 epoch)
 

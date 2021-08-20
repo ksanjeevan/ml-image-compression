@@ -12,7 +12,7 @@ def setup_logging(logging_path):
     if not log_path.exists(): log_path.mkdir()
 
     check_names = lambda y: y if y.isdigit() else -1
-    get_ind = lambda x: int(check_names(x.name.split('_')[1]))
+    get_ind = lambda x: int(check_names(x.name.split('_')[-1]))
     
     run_counter = max([get_ind(p) for p in log_path.glob('*/') if p.is_dir()], default=-1) + 1
 
@@ -57,8 +57,8 @@ class Logger:
         ims = images.numpy()
         outs = outputs.numpy()
 
-        if outs.max() <= 1: outs *= 255
-        if ims.max() <= 1: ims *= 255
+        #if outs.max() <= 1: outs *= 255
+        #if ims.max() <= 1: ims *= 255
 
         outs = np.maximum(np.minimum(outs, 255), 0).round().astype('uint8')
         ims = ims.round().astype('uint8')

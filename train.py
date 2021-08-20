@@ -32,9 +32,9 @@ if __name__ == '__main__':
 
     tf.random.set_seed(0)
 
-    Cr = ComCNN()
+    Cr = ComCNN(num_channels=3)
 
-    Re = RecCNN()
+    Re = RecCNN(num_channels=3)
 
     Co = ImageCodec()
 

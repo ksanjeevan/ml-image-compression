@@ -6,7 +6,7 @@ import tensorflow_datasets as tfds
 
 # https://knowyourdata-tfds.withgoogle.com/#dataset=clic&tab=STATS
 # https://www.tensorflow.org/guide/data_performance#prefetching
-
+#https://www.tensorflow.org/datasets/performances
 
 
 class ClicData:
@@ -16,8 +16,9 @@ class ClicData:
         ds, self.ds_info = tfds.load('clic', 
                                      split=splits, 
                                      download=True, 
-                                     shuffle_files=False,
-                                     with_info=True)
+                                     shuffle_files=True,
+                                     with_info=True,
+                                     read_config=tfds.ReadConfig(shuffle_seed=0))
 
         self._ds = dict(zip(splits, ds))
 
@@ -26,22 +27,23 @@ class ClicData:
         image = image_dic['image']
         image = tf.image.resize(image, (180, 180))
         #image = image / 255.0
+        #image = tf.image.rgb_to_grayscale(image)
         return image
 
     def augmentations(self, image):
         image = tf.image.random_crop(image, (40, 40, 3))
         return image
 
-    def pipeline(self, ds, aug=False):
+    def pipeline(self, ds, train=False):
         ds = ds.map(lambda x: self.image_transforms(x),
                         num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-        if aug:
+        ds = ds.cache() # random transforms after cache
+        if train:
             ds = ds.map(lambda x: self.augmentations(x),
                         num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            #ds = ds.shuffle(self.ds_info.splits['train'].num_examples)
 
-        ds = ds.cache() # random transforms after cache
-        #ds = ds.shuffle(1024)
 
         ds = ds.batch(16, drop_remainder=True)
         ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
@@ -51,14 +53,10 @@ class ClicData:
     def get_train(self):
         # https://www.tensorflow.org/api_docs/python/tf/data/Dataset
         
-        ds_train = self.pipeline(self._ds['train'], aug=True)
-        return ds_train
+        return self.pipeline(self._ds['train'], train=True)
 
     def get_val(self):
-        # https://www.tensorflow.org/api_docs/python/tf/data/Dataset
-        
-        ds_val = self.pipeline(self._ds['test'])
-        return ds_val
+        return self.pipeline(self._ds['test'])
 
 
 '''
