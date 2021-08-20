@@ -64,9 +64,9 @@ class Logger:
         outs = np.maximum(np.minimum(outs, 255), 0).round().astype('uint8')
         ims = ims.round().astype('uint8')
 
-        for i in range(4):
-            np.save('debug/im_%d.npy'%i, ims[i])
-            np.save('debug/out_%d.npy'%i, outs[i])
+        #for i in range(4):
+        #    np.save('debug/im_%d.npy'%i, ims[i])
+        #    np.save('debug/out_%d.npy'%i, outs[i])
 
         display = np.concatenate([ims, outs], axis=2)
 

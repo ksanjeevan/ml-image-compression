@@ -40,6 +40,9 @@ class Trainer:
 
         cr_path = Path(self._config['resume_path']).joinpath('cr/model')
         re_path = Path(self._config['resume_path']).joinpath('re/model')
+
+        print(cr_path)
+        
         self.Cr.load_weights(cr_path)
         self.Re.load_weights(re_path)
 

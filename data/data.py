@@ -23,7 +23,7 @@ class ClicData:
 
 
         self._ds = dict(zip(splits, ds))
-        self.batch_size = config['batch_size']
+        self.batch_size = config.get('batch_size', 16)
 
 
     def image_transforms(self, image_dic):
