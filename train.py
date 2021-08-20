@@ -20,6 +20,7 @@ if __name__ == '__main__':
     argparser.add_argument('--lr-re', default=1e-3, type=float)
     argparser.add_argument('--lr-cr', default=1e-3, type=float)
     argparser.add_argument('--logs', default='logs')
+    argparser.add_argument('--resume-path', default=None)
     argparser.add_argument('--no-log', action='store_true')
 
     args = argparser.parse_args()

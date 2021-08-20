@@ -7,6 +7,8 @@ import tensorflow_datasets as tfds
 # https://knowyourdata-tfds.withgoogle.com/#dataset=clic&tab=STATS
 # https://www.tensorflow.org/guide/data_performance#prefetching
 
+
+
 class ClicData:
     # https://www.tensorflow.org/datasets/catalog/clic
     def __init__(self):
@@ -20,15 +22,27 @@ class ClicData:
         self._ds = dict(zip(splits, ds))
 
 
-    def _common_pipeline(self, ds):
-        ds = ds.map(lambda x: tf.image.resize(x['image'], (180, 180)),
+    def image_transforms(self, image_dic):
+        image = image_dic['image']
+        image = tf.image.resize(image, (180, 180))
+        #image = image / 255.0
+        return image
+
+    def augmentations(self, image):
+        image = tf.image.random_crop(image, (40, 40, 3))
+        return image
+
+    def pipeline(self, ds, aug=False):
+        ds = ds.map(lambda x: self.image_transforms(x),
                         num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-
-        #ds = ds.map(lambda x: x / 255.0, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        if aug:
+            ds = ds.map(lambda x: self.augmentations(x),
+                        num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         ds = ds.cache() # random transforms after cache
         #ds = ds.shuffle(1024)
+
         ds = ds.batch(16, drop_remainder=True)
         ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
 
@@ -37,13 +51,13 @@ class ClicData:
     def get_train(self):
         # https://www.tensorflow.org/api_docs/python/tf/data/Dataset
         
-        ds_train = self._common_pipeline(self._ds['train'])
+        ds_train = self.pipeline(self._ds['train'], aug=True)
         return ds_train
 
     def get_val(self):
         # https://www.tensorflow.org/api_docs/python/tf/data/Dataset
         
-        ds_val = self._common_pipeline(self._ds['validation'])
+        ds_val = self.pipeline(self._ds['test'])
         return ds_val
 
 

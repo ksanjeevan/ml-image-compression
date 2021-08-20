@@ -5,7 +5,6 @@ import tensorflow as tf
 
 # PSNR?
 
-
 def setup_logging(logging_path):
 
     log_path = Path(logging_path)
@@ -29,18 +28,13 @@ def setup_logging(logging_path):
 
 class Logger:
 
-    def __init__(self, name, path='logs'):
+    def __init__(self, path='logs'):
 
-        log_path = setup_logging(path)
-
+        self.log_path = setup_logging(path)
         #tf.keras.callbacks.TensorBoard('logs').set_model(self.Re)
-        self.writer = tf.summary.create_file_writer(str(log_path.joinpath('train')))
+        self.writer = tf.summary.create_file_writer(str(self.log_path))
 
-        self.scalars = {
-                            'loss_re' : tf.keras.metrics.Mean(),
-                            'loss_cr' : tf.keras.metrics.Mean(),
-                            'ssim' : tf.keras.metrics.Mean()
-                        }
+        self.scalars = {}
 
     
     def log_scalars(self, epoch : int):
@@ -53,7 +47,10 @@ class Logger:
             metric.reset_states()
 
     def update_scalars(self, updates : dict):
-        for k, u in updates.items(): self.scalars[k](u)
+        for k, u in updates.items():
+            if k not in self.scalars:
+                self.scalars[k] = tf.keras.metrics.Mean() 
+            self.scalars[k](u)
 
 
     def log_images(self, images : tf.Tensor, outputs : tf.Tensor, epoch : int, num:int=4):
@@ -76,16 +73,22 @@ class Logger:
             tf.summary.image('results', display, step=epoch, max_outputs=num)
 
 
+    # https://www.tensorflow.org/guide/keras/save_and_serialize
+    def log_model(self, name : str, model : tf.keras.Model):
+        model.save_weights(self.log_path.joinpath(name, 'model'))
+
+
+
 class EmptyLogger(Logger):
 
     def __init__(self, name=None, path=None):
-        pass
+        self.scalars = {}
 
     def log_scalars(self, epoch : int):
         pass
     
-    def update_scalars(self, updates : dict):
+    def log_images(self, images : tf.Tensor, outputs : tf.Tensor, epoch : int, num:int=4):
         pass
 
-    def log_images(self, images : tf.Tensor, outputs : tf.Tensor, epoch : int, num:int=4):
+    def log_model(self, name : str, model : tf.keras.Model):
         pass
