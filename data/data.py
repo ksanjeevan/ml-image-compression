@@ -25,6 +25,8 @@ class ClicData:
         self._ds = dict(zip(splits, ds))
         self.batch_size = config.get('batch_size', 16)
 
+        self.random_crop = tf.keras.layers.RandomCrop(40, 40, seed=0)
+
 
     def image_transforms(self, image_dic):
         image = image_dic['image']
@@ -34,7 +36,7 @@ class ClicData:
         return image
 
     def augmentations(self, image):
-        image = tf.image.random_crop(image, (40, 40, 3))
+        image = self.random_crop(image)
         return image
 
     def pipeline(self, ds, train=False):
