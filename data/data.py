@@ -31,7 +31,7 @@ class ClicData:
     def image_transforms(self, image_dic):
         image = image_dic['image']
         image = tf.image.resize(image, (180, 180))
-        #image = image / 255.0
+        image = image / 255.0
         #image = tf.image.rgb_to_grayscale(image)
         return image
 

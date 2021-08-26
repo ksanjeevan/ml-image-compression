@@ -17,17 +17,22 @@ class RecCNN(tf.keras.Model):
         self.convs = tf.keras.Sequential(convs)
         self.conv20 = nn.Conv2D(num_channels, 3, activation=None, padding='same')
 
-    def call(self, x):
-        
-        x_up = tf.image.resize(x, [2*x.shape[1], 2*x.shape[2]], method='bicubic')
+    def residual(self, x, training=False):
 
-        x = self.conv1(x_up)
-        x = self.convs(x)
-        resid = self.conv20(x)
+        x = self.conv1(x)
+        x = self.convs(x, training)
+        return self.conv20(x)
 
-        x = x_up + resid
+    def compact_upscaled(self, x):
+        return tf.image.resize(x, 
+                               size=[2*x.shape[1], 
+                                     2*x.shape[2]], 
+                               method='bicubic')
 
+
+    def call(self, x, training=False):
+        x_up = self.compact_upscaled(x)
+        x = self.residual(x_up, training) + x_up
         #x = tf.minimum(tf.maximum(x, 0), 255.0)
         #x = 255.0 * tf.math.sigmoid(x)
-
         return x

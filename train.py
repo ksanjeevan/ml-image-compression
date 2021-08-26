@@ -19,6 +19,7 @@ if __name__ == '__main__':
     argparser.add_argument('--epochs', default=10)
     argparser.add_argument('--lr-re', default=1e-3, type=float)
     argparser.add_argument('--lr-cr', default=1e-3, type=float)
+    argparser.add_argument('--lr', default=None, type=float)
     argparser.add_argument('--batch-size', default=16, type=int)
     argparser.add_argument('--logs', default='logs')
     argparser.add_argument('--resume-path', default=None)
@@ -26,7 +27,10 @@ if __name__ == '__main__':
 
     args = argparser.parse_args()
 
-
+    if args.lr is not None:
+        args.lr_re = args.lr
+        args.lr_cr = args.lr
+        print(args)
     #ds_train = ClicData().get_train()
     #d, = ds_train.take(1)
 

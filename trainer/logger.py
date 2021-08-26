@@ -3,6 +3,7 @@ import json
 import numpy as np
 import tensorflow as tf
 
+# --samples_per_plugin images=100
 
 # PSNR?
 
@@ -54,15 +55,15 @@ class Logger:
             self.scalars[k](u)
 
 
-    def log_images(self, images : tf.Tensor, outputs : tf.Tensor, epoch : int, num:int=4):
+    def log_images(self, images : tf.Tensor, outputs : tf.Tensor,epoch : int, num:int=4):
         ims = images.numpy()
         outs = outputs.numpy()
 
-        #if outs.max() <= 1: outs *= 255
-        #if ims.max() <= 1: ims *= 255
+        if outs.max() > 1: outs /= 255
+        if ims.max() > 1: ims /= 255
 
-        outs = np.maximum(np.minimum(outs, 255), 0).round().astype('uint8')
-        ims = ims.round().astype('uint8')
+        #outs = np.maximum(np.minimum(outs, 255), 0).round().astype('uint8')
+        #ims = ims.round().astype('uint8')
 
         #for i in range(4):
         #    np.save('debug/im_%d.npy'%i, ims[i])
@@ -77,6 +78,16 @@ class Logger:
     # https://www.tensorflow.org/guide/keras/save_and_serialize
     def log_model(self, name : str, model : tf.keras.Model):
         model.save_weights(self.log_path.joinpath(name, 'model'))
+
+
+    def log_hist(self, data : dict, epoch : int):
+
+        with self.writer.as_default():
+            for name, weights in data.items():
+                tf.summary.histogram(f'hist_{name}', 
+                                     weights, 
+                                     step=epoch, 
+                                     buckets=None)
 
 
     def log_config(self, config : dict):
@@ -101,3 +112,5 @@ class EmptyLogger(Logger):
     def log_config(self, config : dict):
         pass
 
+    def log_hist(self, data : dict, epoch : int):
+        pass

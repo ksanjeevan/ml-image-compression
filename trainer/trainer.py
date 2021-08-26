@@ -10,6 +10,9 @@ from tqdm import tqdm
 from .logger import Logger, EmptyLogger
 
 
+
+MAX_VAL = 1.0
+
 class Trainer:
 
     def __init__(self, Cr : tf.keras.Model, 
@@ -23,6 +26,7 @@ class Trainer:
         self.log = EmptyLogger() if config['no_log'] else Logger(config['logs'])
         self.log.log_config(config)
 
+        # self.loss_obj = tf.keras.losses.MeanSquaredError(reduction=tf.keras.losses.Reduction.SUM)
         self.loss_obj = tf.keras.losses.MeanSquaredError()
         self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr_re'])
         self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr_cr'])
@@ -40,8 +44,6 @@ class Trainer:
 
         cr_path = Path(self._config['resume_path']).joinpath('cr/model')
         re_path = Path(self._config['resume_path']).joinpath('re/model')
-
-        print(cr_path)
         
         self.Cr.load_weights(cr_path)
         self.Re.load_weights(re_path)
@@ -63,6 +65,7 @@ class Trainer:
                 results = self.train_step(images)
                 self.log.update_scalars(results['metrics'])
         
+            self.log.log_hist(results['tensors']['weights'], epoch)
 
             _val_iter = tqdm(self.ds_val, leave=False, desc='val')
             for batch_idx, images in enumerate(_val_iter):
@@ -90,8 +93,12 @@ class Trainer:
             out_codec = self.Co(out_cr)        
 
             out_re = self.Re(out_codec, training=True)
-
             loss_re = self.loss_obj(images, out_re)
+            
+            #x_hat = self.Re.compact_upscaled(out_codec)
+            #residual = self.Re.residual(x_hat, training=True)
+            #loss_re = self.loss_obj(residual, images - x_hat)
+
 
         
         gradients_re = tape_re.gradient(loss_re, self.Re.trainable_variables)
@@ -99,7 +106,8 @@ class Trainer:
                                        self.Re.trainable_variables))
         # ------------ End -------------
 
-    
+
+
         # ------------ Update Cr -------------
         with tf.GradientTape() as tape_cr:
 
@@ -109,7 +117,6 @@ class Trainer:
 
             loss_cr = self.loss_obj(images, out_re_aprox)
 
-
         gradients_cr = tape_cr.gradient(loss_cr, self.Cr.trainable_variables)
         self.optimizer_cr.apply_gradients(zip(gradients_cr, 
                                       self.Cr.trainable_variables))
@@ -117,31 +124,45 @@ class Trainer:
 
 
         out = self.Re(self.Co(self.Cr(images)))
+        out = tf.minimum(tf.maximum(out, 0), MAX_VAL)
+        ssim = tf.image.ssim(images, out, max_val=MAX_VAL)
 
-        out = tf.minimum(tf.maximum(out, 0), 255.0)
-        ssim = tf.image.ssim(images, out, max_val=255)
+
+        hist_weights1 = {l.name:l for l in self.Cr.bn.trainable_variables}
+        hist_weights2 = {l.name:l for l in self.Re.conv1.trainable_variables}
+        hist_weights3 = {l.name:l for l in self.Re.convs.layers[1].trainable_variables}
+
+        hist_weights = {**hist_weights1, **hist_weights2, **hist_weights3}
 
         return {
-                    'metrics' : {'loss_cr':loss_cr, 
-                                 'loss_re':loss_re, 
-                                 'ssim':ssim},
-                    'tensors' : {'images':images,
-                                 'outputs':out} # should be a special func
+                    'metrics' : {
+                                     'loss_cr' : loss_cr, 
+                                     'loss_re' : loss_re, 
+                                     'ssim'    : ssim,
+                                     'grad_re' : tf.linalg.global_norm(gradients_re),
+                                     'grad_cr' : tf.linalg.global_norm(gradients_cr)
+                                 },
+
+                    'tensors' : {   
+                                    'images'  : images,
+                                    'outputs' : out,
+                                    'weights' : hist_weights
+                                 } # should be a special func
                 }
 
     def val_step(self, images : tf.Tensor):
 
         out_cr = self.Cr(images, training=False)
         out_codec = self.Co(out_cr)        
-        out = self.Re(out_codec, training=True)
+        out = self.Re(out_codec, training=False)
 
         loss_re = self.loss_obj(images, out)
 
         out_re_aprox = self.Re(out_cr, training=False)
         loss_cr = self.loss_obj(images, out_re_aprox)
 
-        out = tf.minimum(tf.maximum(out, 0), 255.0)
-        ssim = tf.image.ssim(images, out, max_val=255)
+        out = tf.minimum(tf.maximum(out, 0), MAX_VAL)
+        ssim = tf.image.ssim(images, out, max_val=MAX_VAL)
 
         return {
                     'metrics' : {'loss_cr_val':loss_cr, 
