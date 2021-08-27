@@ -88,8 +88,10 @@ class Trainer:
             out_cr = self.Cr(images, training=False)
 
             out_codec = self.Co(out_cr)        
-
             out_re = self.Re(out_codec, training=True)
+
+            print(out_codec.shape, images.shape, out_cr.shape)
+            exit()
             loss_re = self.loss_obj(images, out_re)
             
             #x_hat = self.Re.compact_upscaled(out_codec)
@@ -118,6 +120,7 @@ class Trainer:
         self.optimizer_cr.apply_gradients(zip(gradients_cr, 
                                       self.Cr.trainable_variables))
         # ------------ End -------------
+
 
 
         out = self.Re(self.Co(self.Cr(images)))

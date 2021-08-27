@@ -6,10 +6,9 @@ class RecCNN(tf.keras.Model):
 
     def __init__(self, num_channels=3):
         super(RecCNN, self).__init__()
+
         self.conv1 = nn.Conv2D(64, 3, activation='relu', padding='same')
-
         convs = []
-
         for _ in range(18):
             convs.append( nn.Conv2D(64, 3, activation='relu', padding='same') )
             convs.append( nn.BatchNormalization() )
@@ -21,13 +20,20 @@ class RecCNN(tf.keras.Model):
 
         x = self.conv1(x)
         x = self.convs(x, training)
-        return self.conv20(x)
+        x = self.conv20(x)
+        return x
 
     def compact_upscaled(self, x):
+        # return tf.image.resize(x, 
+        #                        size=[2*x.shape[1], 
+        #                              2*x.shape[2]], 
+        #                        method='bicubic')
+
         return tf.image.resize(x, 
-                               size=[2*x.shape[1], 
-                                     2*x.shape[2]], 
+                               size=[180, 180], 
                                method='bicubic')
+
+
 
 
     def call(self, x, training=False):

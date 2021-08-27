@@ -9,7 +9,8 @@ from trainer import Trainer
 class Evaluator:
 
     def __init__(self, config : dict):
-
+        config['no_log'] = True
+        
         self._trainer = Trainer(Cr=None, Re=None, Co=ImageCodec(), config=config)
 
         self.loss_re = tf.keras.metrics.Mean() 
@@ -59,12 +60,11 @@ class Evaluator:
 if __name__ == '__main__':
 
     config = get_train_args()
-    config['no_log'] = True
-
+    
     e = Evaluator(config)
-    #metrics = e.get_metrics()
-    # print(metrics)
-    e.get_all()
+    metrics = e.get_metrics()
+    print(metrics)
+    #e.get_all()
 
 
     

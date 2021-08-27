@@ -1,9 +1,48 @@
 
-
 # ML Image Compression
 
+- [Some of my notes on traditional compression](https://github.com/ksanjeevan/ml-image-compression/blob/master/JPEG%20Compression.ipynb)
 
-[tensorflow compression](https://github.com/tensorflow/compression)
+- [tensorflow compression repo](https://github.com/tensorflow/compression)
+
+
+
+
+
+#### Implementing [*An End-to-End Compression Framework Based on Convolutional Neural Networks*](https://arxiv.org/pdf/1708.00838v1.pdf)
+
+##### Architecture
+
+Architecture used in this repo:
+
+<p align="center">
+<img src="plots/arch.png" width="650px"/>
+</p>
+
+
+###### Results
+
+<p align="center">
+<img src="plots/im.png" width="750px"/>
+</p>
+
+Trained the method to achive a 75.3% SSIM on the test split of the [CLIC dataset](https://www.tensorflow.org/datasets/catalog/clic)
+
+
+
+##### Notes
+
+- Paper doesn't explicitly mention this but using normalization of the rgb values helped with training
+
+- Making the output of the `Cr` network go through a `sigmoid` before going into `Co` gave better results and makes sense for the gradients to flow although not mentioned in the paper
+
+- Some of the notation of `Co(x_hat)` in the paper is confusing when showing the residual loss, using eq. (5) works fine
+
+- Because of the `"same"` padding used in the architecture, seeing somme ugly border artifacts in the uncompressed images
+
+
+
+
 
 
 ### Papers
@@ -27,3 +66,7 @@
 
 
 
+
+
+
+		
