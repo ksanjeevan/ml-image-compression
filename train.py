@@ -1,20 +1,12 @@
 
 
-
-import tensorflow as tf
-
 from trainer import Trainer
 
 from net import ComCNN, RecCNN, ImageCodec
 
-from data import ClicData
+import argparse
 
-
-if __name__ == '__main__':
-
-
-    import argparse
-
+def get_train_args():
     argparser = argparse.ArgumentParser()
     argparser.add_argument('--epochs', default=10)
     argparser.add_argument('--lr-re', default=1e-3, type=float)
@@ -30,11 +22,21 @@ if __name__ == '__main__':
     if args.lr is not None:
         args.lr_re = args.lr
         args.lr_cr = args.lr
-        print(args)
-    #ds_train = ClicData().get_train()
-    #d, = ds_train.take(1)
+
+    return vars(argparser.parse_args())
 
 
+
+if __name__ == '__main__':
+
+    config = get_train_args()
+
+    # from data import ClicData
+    # ds_train = ClicData().get_train()
+    # d, = ds_train.take(1)
+
+
+    import tensorflow as tf
     tf.random.set_seed(0)
 
     Cr = ComCNN(num_channels=3)
@@ -43,7 +45,7 @@ if __name__ == '__main__':
 
     Co = ImageCodec()
 
-    t = Trainer(Cr, Re, Co, config=vars(args))
+    t = Trainer(Cr, Re, Co, config=config)
 
     t.run()
 

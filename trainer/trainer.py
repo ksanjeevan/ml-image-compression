@@ -5,10 +5,10 @@ import tensorflow as tf
 # https://www.tensorflow.org/guide/keras/writing_a_training_loop_from_scratch
 
 from data import ClicData
+from net import load_model
 
 from tqdm import tqdm
 from .logger import Logger, EmptyLogger
-
 
 
 MAX_VAL = 1.0
@@ -36,17 +36,14 @@ class Trainer:
         self.ds_val = dataset.get_val()
 
         if config['resume_path'] is not None:
-            self._resume_train_prep()
+            self._resume_weights()
 
-    def _resume_train_prep(self):
-        self.Cr(tf.zeros(self.ds_train.element_spec.shape))
-        self.Re(tf.zeros(self.ds_train.element_spec.shape))
+    def _resume_weights(self):
 
-        cr_path = Path(self._config['resume_path']).joinpath('cr/model')
-        re_path = Path(self._config['resume_path']).joinpath('re/model')
-        
-        self.Cr.load_weights(cr_path)
-        self.Re.load_weights(re_path)
+        input_shape = self.ds_train.element_spec.shape
+
+        self.Cr = load_model('cr', self._config['resume_path'], input_shape)
+        self.Re = load_model('re', self._config['resume_path'], input_shape)
 
         print('[RESUME TRAINING]')
 
