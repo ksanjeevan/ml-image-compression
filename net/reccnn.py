@@ -24,15 +24,10 @@ class RecCNN(tf.keras.Model):
         return x
 
     def compact_upscaled(self, x):
-        # return tf.image.resize(x, 
-        #                        size=[2*x.shape[1], 
-        #                              2*x.shape[2]], 
-        #                        method='bicubic')
-
         return tf.image.resize(x, 
-                               size=[180, 180], 
+                               size=[2*x.shape[1], 
+                                     2*x.shape[2]], 
                                method='bicubic')
-
 
 
 
