@@ -63,17 +63,3 @@ class ClicData:
     def get_val(self):
         return self.pipeline(self._ds['test'])
 
-
-'''
-
-print(ds_train)
-print(type(ds_train))
-exit()
-
-#dataset = train.batch(64).prefetch(10).take(5)
-
-for im in ds_train:
-    #print(im['image'].shape)
-    print(im.shape)
-    break
-'''

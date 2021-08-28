@@ -94,6 +94,7 @@ class Trainer:
             exit()
             loss_re = self.loss_obj(images, out_re)
             
+            # Paper loss !?
             #x_hat = self.Re.compact_upscaled(out_codec)
             #residual = self.Re.residual(x_hat, training=True)
             #loss_re = self.loss_obj(residual, images - x_hat)
@@ -122,12 +123,11 @@ class Trainer:
         # ------------ End -------------
 
 
-
         out = self.Re(self.Co(self.Cr(images)))
         out = tf.minimum(tf.maximum(out, 0), MAX_VAL)
         ssim = tf.image.ssim(images, out, max_val=MAX_VAL)
 
-
+        # Some hist debugging
         hist_weights1 = {l.name:l for l in self.Cr.bn.trainable_variables}
         hist_weights2 = {l.name:l for l in self.Re.conv1.trainable_variables}
         hist_weights3 = {l.name:l for l in self.Re.convs.layers[1].trainable_variables}

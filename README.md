@@ -1,7 +1,7 @@
 
 # ML Image Compression
 
-- [Some of my notes on traditional compression](https://github.com/ksanjeevan/ml-image-compression/blob/master/JPEG%20Compression.ipynb)
+- Some of my notes on traditional compression in [./JPEG Compression.ipynb](https://github.com/ksanjeevan/ml-image-compression/blob/master/JPEG%20Compression.ipynb)
 
 - [tensorflow compression repo](https://github.com/tensorflow/compression)
 
@@ -38,7 +38,7 @@ Trained the method to achive a **75.3%** SSIM on the test split of the [CLIC dat
 
 - Some of the notation of `Co(x_hat)` in the paper is confusing when showing the residual loss, using eq. (5) works fine
 
-- Because of the `"same"` padding used in the architecture, seeing somme ugly border artifacts in the uncompressed images
+- Because of the `"same"` padding used in the architecture, seeing somme ugly border artifacts in the reconstructed images
 
 
 
@@ -49,7 +49,9 @@ Trained the method to achive a **75.3%** SSIM on the test split of the [CLIC dat
 
 - [An End-to-End Compression Framework Based on Convolutional Neural Networks](https://arxiv.org/pdf/1708.00838v1.pdf): encoder/decoder architecture tries to learn a compact, image-like representation of an image and use an image codec to store it, then uses interpolation + decoder network in the reconstruction
 
-- [Learning Convolutional Networks for Content-weighted Image Compression](https://openaccess.thecvf.com/content_cvpr_2018/papers/Li_Learning_Convolutional_Networks_CVPR_2018_paper.pdf): encoder/decoder architecture that extracts a spatial importance mask to predict optimal bit allocation ([code](https://github.com/adityassrana/Content-Weighted-Image-Compressionz))
+- [Better Compression with Deep Pre-Editing](https://arxiv.org/pdf/2002.00113.pdf): Learns a transform on the original image such that it can be modified into a "similar" image that can be compressed by a traditional codec but with less artifacts.
+
+- [Learning Convolutional Networks for Content-weighted Image Compression](https://openaccess.thecvf.com/content_cvpr_2018/papers/Li_Learning_Convolutional_Networks_CVPR_2018_paper.pdf): encoder/decoder architecture that extracts a spatial importance mask to predict optimal bit allocation
 
 - [High-Fidelity Generative Image Compression](https://arxiv.org/pdf/2006.09965.pdf): google paper on GANs for compression ([code](https://github.com/tensorflow/compression/tree/master/models/hific))
 
