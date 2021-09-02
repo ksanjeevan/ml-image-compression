@@ -7,16 +7,18 @@
 - Some of my notes on traditional compression in [./JPEG Compression.ipynb](https://github.com/ksanjeevan/ml-image-compression/blob/master/JPEG%20Compression.ipynb)
 
 - [Implementations](#imp)
-	- [*An End-to-End Compression Framework Based on Convolutional Neural Networks*](#full)
-	- [*Learning Convolutional Networks for Content-weighted Image Compression*](#cont)
+	- [1. *An End-to-End Compression Framework Based on Convolutional Neural Networks*](#full)
+	- [2. *Learning Convolutional Networks for Content-weighted Image Compression*](#cont)
 
 - [Papers & Resources](#papes)	
 
 
 ## Implementations <a name="imp"/>
 
+
  <a name="full"/>
-#### [An End-to-End Compression Framework Based on Convolutional Neural Networks](https://arxiv.org/pdf/1708.00838v1.pdf)
+ 
+#### [1. *An End-to-End Compression Framework Based on Convolutional Neural Networks*](https://arxiv.org/pdf/1708.00838v1.pdf)
 
 ##### Architecture
 
@@ -51,7 +53,7 @@ Trained the method to achive a **75.3%** SSIM on the test split of the [CLIC dat
 
 <a name="cont"/>
 
-#### [*Learning Convolutional Networks for Content-weighted Image Compression*](https://openaccess.thecvf.com/content_cvpr_2018/papers/Li_Learning_Convolutional_Networks_CVPR_2018_paper.pdf) 
+#### [2. *Learning Convolutional Networks for Content-weighted Image Compression*](https://openaccess.thecvf.com/content_cvpr_2018/papers/Li_Learning_Convolutional_Networks_CVPR_2018_paper.pdf) 
 
 
 ##### Architecture
