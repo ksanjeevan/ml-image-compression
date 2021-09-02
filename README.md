@@ -35,7 +35,13 @@ Architecture used in this repo:
 <img src="plots/im.png" width="750px"/>
 </p>
 
-Trained the method to achive a **75.3%** SSIM on the test split of the [CLIC dataset](https://www.tensorflow.org/datasets/catalog/clic).
+Can be trained like.:
+
+```python
+python train.py --epochs 50 --lr 0.0002 --logs logs/
+```
+
+Method achieved a **75.3%** SSIM on the test split of the [CLIC dataset](https://www.tensorflow.org/datasets/catalog/clic).
 
 
 
