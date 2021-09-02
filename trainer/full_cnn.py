@@ -90,8 +90,6 @@ class Trainer:
             out_codec = self.Co(out_cr)        
             out_re = self.Re(out_codec, training=True)
 
-            print(out_codec.shape, images.shape, out_cr.shape)
-            exit()
             loss_re = self.loss_obj(images, out_re)
             
             # Paper loss !?

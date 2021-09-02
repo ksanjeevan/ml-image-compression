@@ -1,15 +1,22 @@
 
 # ML Image Compression
 
+
+
+### Contents
 - Some of my notes on traditional compression in [./JPEG Compression.ipynb](https://github.com/ksanjeevan/ml-image-compression/blob/master/JPEG%20Compression.ipynb)
 
-- [tensorflow compression repo](https://github.com/tensorflow/compression)
+- [Implementations](#imp)
+	- [*An End-to-End Compression Framework Based on Convolutional Neural Networks*](#full)
+	- [*Learning Convolutional Networks for Content-weighted Image Compression*](#cont)
+
+- [Papers & Resources](#papes)	
 
 
+## Implementations <a name="imp"/>
 
-
-
-#### Implementing [*An End-to-End Compression Framework Based on Convolutional Neural Networks*](https://arxiv.org/pdf/1708.00838v1.pdf)
+ <a name="full"/>
+#### [*An End-to-End Compression Framework Based on Convolutional Neural Networks*](https://arxiv.org/pdf/1708.00838v1.pdf)
 
 ##### Architecture
 
@@ -42,10 +49,20 @@ Trained the method to achive a **75.3%** SSIM on the test split of the [CLIC dat
 
 
 
+<a name="cont"/>
+#### [*Learning Convolutional Networks for Content-weighted Image Compression*](https://openaccess.thecvf.com/content_cvpr_2018/papers/Li_Learning_Convolutional_Networks_CVPR_2018_paper.pdf) 
+
+
+##### Architecture
+
+##### Results
+
+##### Notes
 
 
 
-### Papers
+
+## Papers & Resources <a name="papes"/>
 
 - [An End-to-End Compression Framework Based on Convolutional Neural Networks](https://arxiv.org/pdf/1708.00838v1.pdf): encoder/decoder architecture tries to learn a compact, image-like representation of an image and use an image codec to store it, then uses interpolation + decoder network in the reconstruction
 
@@ -64,6 +81,8 @@ Trained the method to achive a **75.3%** SSIM on the test split of the [CLIC dat
 - [Nonlinear Transform Coding](https://arxiv.org/pdf/2007.03034.pdf): ([video talk](https://www.youtube.com/watch?v=x_q7cZviXkY))
 
 - [ML Image Compression Benchmark review](https://arxiv.org/pdf/2002.03711.pdf)
+
+- [tensorflow compression repo](https://github.com/tensorflow/compression)
 
 
 
