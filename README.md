@@ -22,7 +22,7 @@
 
 ##### Architecture
 
-Architecture used in this repo:
+Architecture used:
 
 <p align="center">
 <img src="plots/arch.png" width="650px"/>
@@ -63,6 +63,11 @@ Method achieved a **75.3%** SSIM on the test split of the [CLIC dataset](https:/
 
 
 ##### Architecture
+
+Better drawing can be seen in the paper, but the general idea follows:
+<p align="center">
+<img src="plots/arch2.png" width="650px"/>
+</p>
 
 ##### Results
 
