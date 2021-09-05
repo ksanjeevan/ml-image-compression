@@ -15,8 +15,10 @@ class ResBlock(nn.Layer):
 
   def build(self, input_shape):
     params = dict(activation='relu', padding='same')
-    self.conv1 = nn.Conv2D(self.num_filters, 3, **params)
-    self.conv2 = nn.Conv2D(int(input_shape[-1]), 3, **params)
+    self.conv1 = nn.Conv2D(self.num_filters, 3, 
+                           padding='same', activation='relu')
+    self.conv2 = nn.Conv2D(int(input_shape[-1]), 3, 
+                           padding='same', activation=None)
 
   def call(self, x):
     x_res = x

@@ -39,6 +39,18 @@ class Compressor(tf.keras.Model):
     return c, p
 
 
+  def call_pre(self, x : tf.Tensor):
+
+    Ex, _ = self.encoder(x)
+
+    binary_fmap = self.binarizer(Ex)
+
+    c = self.decoder(binary_fmap)
+
+    return c
+
+
+
 def rate_loss(Px, r_0):
   L_R_0 = tf.reduce_sum(Px)
   
@@ -46,4 +58,5 @@ def rate_loss(Px, r_0):
   # with r_0 being the desired bpp
   r = r_0 * Px.shape[1] * Px.shape[2]
 
+  # return L_R_0
   return tf.maximum(L_R_0 - r, 0)

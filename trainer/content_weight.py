@@ -72,12 +72,16 @@ class Trainer:
 
     with tf.GradientTape() as tape:
 
-      c, Px = self.model(images)
+      c = self.model.call_pre(images)
+      # c, Px = self.model(images)
 
       ld = self.L_D(images, c)
-      lr = self.L_R(Px, self.rate_0)
-      loss = ld + self.gamma * lr
+      lr = 0
+      # lr = self.L_R(Px, self.rate_0)
+      
+      # print(tf.reduce_mean(Px).numpy(), lr.numpy(), self.gamma * lr.numpy())
 
+      loss = ld + self.gamma * lr
 
     gradients = tape.gradient(loss, self.model.trainable_variables)
 
@@ -93,8 +97,7 @@ class Trainer:
     self.optimizer.apply_gradients(zip(gradients, 
                                    self.model.trainable_variables))
 
-
-    c = tf.minimum(tf.maximum(c, 0), Trainer.MAX_VAL)
+    c = tf.minimum(tf.maximum(c, 0.0), Trainer.MAX_VAL)
     ssim = tf.image.ssim(images, c, max_val=Trainer.MAX_VAL)
 
     # Some hist debugging

@@ -28,7 +28,7 @@ class Binarizer:
   @tf.custom_gradient
   def __call__(self, x):
     def grad(y):
-      return tf.maximum(tf.minimum(y, 1.0), 0.0)
+      return tf.where((0.0 <= x)&(x <= 1.0), 1.0, 0.0)
     return tf.where(x > 0.5, 1.0, 0.0), grad
 
 

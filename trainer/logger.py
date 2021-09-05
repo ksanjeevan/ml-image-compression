@@ -13,7 +13,7 @@ def setup_logging(logging_path):
   
   if not log_path.exists(): log_path.mkdir()
 
-  get_ind = lambda x: int(check_names(x.name.repalce('run_', '')))
+  get_ind = lambda x: int(x.name.replace('run_', ''))
   run_counter = max([get_ind(p) for p in log_path.glob('run_*') if p.is_dir()], default=-1) + 1
 
   run_path = log_path.joinpath('run_%s'%run_counter)

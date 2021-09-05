@@ -25,18 +25,20 @@ class ClicData:
     self._ds = dict(zip(splits, ds))
     self.batch_size = config.get('batch_size', 16)
 
-    self.resize_ims = True if config['mode'] == 'full' else False
     self.crop_size = (40, 40) if config['mode'] == 'full' else (128, 128)
+    self.resize_size = (180, 180) if config['mode'] == 'full' else (300, 300)
+
     self.random_crop = tf.keras.layers.RandomCrop(*self.crop_size, seed=0)
 
 
   def image_transforms(self, image_dic):
     image = image_dic['image']
 
-    if self.resize_ims:
-      image = tf.image.resize(image, (180, 180))
-    else:
-      image = tf.image.convert_image_dtype(image, 'float32')
+    image = tf.image.resize(image, (180, 180))
+    # if self.resize_ims:
+    #   image = tf.image.resize(image, (180, 180))
+    # else:
+    #   image = tf.cast(image, dtype='float32')
 
     image = image / 255.0
     #image = tf.image.rgb_to_grayscale(image)
