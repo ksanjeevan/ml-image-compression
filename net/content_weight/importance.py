@@ -6,14 +6,21 @@ class ImportanceMap(nn.Layer):
   def __init__(self):
     super(ImportanceMap, self).__init__()
 
-    layers = [nn.Conv2D(128, 3, padding='same', activation='relu'),
-          nn.Conv2D(128, 3, padding='same', activation='relu'),
-          nn.Conv2D(1, 1, activation='sigmoid')]
+    # layers = [nn.Conv2D(128, 3, padding='same', activation='relu'),
+    #       nn.Conv2D(128, 3, padding='same', activation='relu'),
+    #       nn.Conv2D(1, 1, activation='sigmoid')]
 
-    self.model = tf.keras.Sequential(layers)
+    # self.model = tf.keras.Sequential(layers)
+
+    self.conv1 = nn.Conv2D(128, 3, padding='same', activation='relu')
+    self.conv2 = nn.Conv2D(128, 3, padding='same', activation='relu')
+    self.conv3 = nn.Conv2D(1, 1, activation='sigmoid')
 
   def call(self, x):
-    return self.model(x)
+    x = self.conv1(x)
+    x = self.conv2(x)
+    x = self.conv3(x)
+    return x
 
 
 class Binarizer:
@@ -21,8 +28,8 @@ class Binarizer:
   @tf.custom_gradient
   def __call__(self, x):
     def grad(y):
-      return tf.maximum(tf.minimum(y, 1), 0)
-    return tf.where(x > 0.5, 1, 0), grad
+      return tf.maximum(tf.minimum(y, 1.0), 0.0)
+    return tf.where(x > 0.5, 1.0, 0.0), grad
 
 
 class Quantizer:
@@ -76,9 +83,10 @@ class Mask:
     for k in range(1, self.n + 1):
       ret.append( k <= (self.n * Qp / self.L) ) 
 
+
     # after k > n * Q(p) / L, increasing values of k will
     # mean m_ij = 0 and will be discarded
-    m = tf.cast(tf.concat(ret, axis=-1), dtype='int32')
+    m = tf.cast(tf.concat(ret, axis=-1), dtype='float32')
     
     return m, grad
 

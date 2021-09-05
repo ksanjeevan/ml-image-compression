@@ -35,7 +35,7 @@ Architecture used:
 <img src="plots/im.png" width="750px"/>
 </p>
 
-Can be trained like.:
+Can be trained like:
 
 ```python
 python train.py --epochs 50 --lr 0.0002 --logs logs/

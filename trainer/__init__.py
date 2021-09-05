@@ -1,1 +1,0 @@
-from .full_cnn import Trainer

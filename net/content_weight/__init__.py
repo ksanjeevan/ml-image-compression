@@ -36,7 +36,4 @@ class DepthToSpace(nn.Layer):
     return tf.nn.depth_to_space(x, block_size=self.block_size)
 
 
-
-from .encoder import *
-from .importance import *
-from .decoder import *
+from .model import *

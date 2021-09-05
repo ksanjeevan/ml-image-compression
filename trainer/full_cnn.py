@@ -10,17 +10,18 @@ from net import load_model
 from tqdm import tqdm
 from .logger import Logger, EmptyLogger
 
+from net import ComCNN, RecCNN, ImageCodec
 
 MAX_VAL = 1.0
 
 class Trainer:
 
-  def __init__(self, Cr : tf.keras.Model, 
-                     Re : tf.keras.Model, 
-                     Co : tf.keras.Model,
-                     config : dict):
+  def __init__(self, config : dict):
 
-      self.Cr, self.Re, self.Co = Cr, Re, Co
+      self.Cr = ComCNN(num_channels=3)
+      self.Re = RecCNN(num_channels=3)
+      self.Co = ImageCodec()
+
       self._config = config
 
       self.log = EmptyLogger() if config['no_log'] else Logger(config['logs'])
@@ -28,8 +29,8 @@ class Trainer:
 
       # self.loss_obj = tf.keras.losses.MeanSquaredError(reduction=tf.keras.losses.Reduction.SUM)
       self.loss_obj = tf.keras.losses.MeanSquaredError()
-      self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr_re'])
-      self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr_cr'])
+      self.optimizer_re = tf.keras.optimizers.Adam(learning_rate=config['lr'])
+      self.optimizer_cr = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
       dataset = ClicData(config)
       self.ds_train = dataset.get_train()
