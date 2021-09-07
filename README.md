@@ -64,15 +64,20 @@ Method achieved a **75.3%** SSIM on the test split of the [CLIC dataset](https:/
 
 ##### Architecture
 
-Better drawing can be seen in the paper, but the general idea follows:
+General idea follows:
 <p align="center">
 <img src="plots/arch2.png" width="650px"/>
 </p>
 
+More details on the model were excluded from the paper and instead kept at a site that is no longer up. Wayback machine cache of it [here](https://web.archive.org/web/20181219024831/http://www2.comp.polyu.edu.hk:80/~15903062r/content-weighted-image-compression.html).
+
 ##### Results
+
+N/A
 
 ##### Notes
 
+No training code by the authors and paper description is very brief. Not able to reproduce for now.
 
 
 
